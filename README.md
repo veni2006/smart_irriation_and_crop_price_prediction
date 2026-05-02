@@ -1,0 +1,1 @@
+# smart_irriation_and_crop_price_prediction
