@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriSmart AI</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar">
+<div class="logo">🌾 AgriSmart AI</div>
+
+<ul>
+<li><a href="#home">Home</a></li>
+<li><a href="#dashboard">Dashboard</a></li>
+<li><a href="#irrigation">Irrigation</a></li>
+<li><a href="#pricing">Pricing</a></li>
+</ul>
+</nav>
+
+<section class="hero" id="home">
+
+<div class="hero-left">
+<h1>AI Powered Smart Irrigation & Crop Price Prediction</h1>
+<p>Future ready farming with machine learning insights.</p>
+<a href="#dashboard" class="hero-btn">Explore Dashboard</a>
+</div>
+
+<div class="hero-right">
+<img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1000">
+</div>
+
+</section>
+
+<!-- Dashboard -->
+<section class="stats" id="dashboard">
+
+<div class="stat-box">
+<h3>💧 Water Saved</h3>
+<p>{{ water_saved }}%</p>
+</div>
+
+<div class="stat-box">
+<h3>📈 Profit Growth</h3>
+<p>+{{ profit_growth }}%</p>
+</div>
+
+<div class="stat-box">
+<h3>🌾 Yield Increase</h3>
+<p>+{{ yield_growth }}%</p>
+</div>
+
+<div class="stat-box">
+<h3>🌧 Rain Alert</h3>
+<p>{{ rain_alert }}</p>
+</div>
+
+</section>
+
+<section class="cards">
+
+<!-- Irrigation -->
+<div class="card" id="irrigation">
+
+<h2>💧 Smart Irrigation</h2>
+
+<form method="POST">
+
+<input type="number" step="any" name="temperature" placeholder="Temperature" required>
+<input type="number" step="any" name="humidity" placeholder="Humidity" required>
+<input type="number" step="any" name="ph" placeholder="pH Value" required>
+<input type="number" step="any" name="rainfall" placeholder="Rainfall" required>
+
+<select name="crop" required>
+<option value="">Select Crop</option>
+{% for crop in crop_names %}
+<option value="{{ crop }}">{{ crop }}</option>
+{% endfor %}
+</select>
+
+<button type="submit" name="irrigation_btn">Predict Irrigation</button>
+
+</form>
+
+{% if irrigation_result %}
+<div class="result success">
+<p><strong>{{ irrigation_result }}</strong></p>
+<p>{{ water_result }}</p>
+</div>
+{% endif %}
+
+</div>
+
+<!-- Price -->
+<div class="card" id="pricing">
+
+<h2>📈 Crop Price Prediction</h2>
+
+<form method="POST">
+
+<input type="number" name="state" placeholder="State Code" required>
+<input type="number" name="district" placeholder="District Code" required>
+<input type="number" name="market" placeholder="Market Code" required>
+<input type="number" name="commodity" placeholder="Commodity Code" required>
+<input type="number" name="variety" placeholder="Variety Code" required>
+<input type="number" name="grade" placeholder="Grade Code" required>
+
+<input type="number" name="day" placeholder="Day" required>
+<input type="number" name="month" placeholder="Month" required>
+<input type="number" name="year" placeholder="Year" required>
+
+<input type="number" step="any" name="min_price" placeholder="Min Price" required>
+<input type="number" step="any" name="max_price" placeholder="Max Price" required>
+
+<button type="submit" name="price_btn">Predict Price</button>
+
+</form>
+
+{% if price_result %}
+<div class="result price-box">
+<p><strong>Current Price: ₹ {{ price_result }}</strong></p>
+<p>Next Month Forecast: ₹ {{ future_price }}</p>
+</div>
+
+<canvas id="priceChart"></canvas>
+
+<script>
+const ctx = document.getElementById('priceChart');
+
+new Chart(ctx, {
+type:'line',
+data:{
+labels:['2 Months Ago','Last Month','Current','Next Month'],
+datasets:[{
+label:'Crop Price Trend',
+data: {{ chart_values|tojson }},
+borderWidth:3,
+tension:0.3,
+fill:false
+}]
+},
+options:{responsive:true}
+});
+</script>
+
+{% endif %}
+
+</div>
+
+</section>
+
+</body>
+</html>
